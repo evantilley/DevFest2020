@@ -1,0 +1,40 @@
+
+.container {
+    position:relative;
+    width: 100%;
+    max-width: 840px;
+}
+
+.blue{
+    width: 5.4%;
+    position: absolute;
+    top: 30.4%;
+    left:38.9%;
+}
+
+.bold{
+    font-weight: bold;
+}
+
+
+.green{
+    color: green;
+}
+
+.anim1{
+    animation-name: anim1;
+    animation-delay: 0s;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+
+@keyframes anim1{
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(359deg);}
+}
+
+
+
+
