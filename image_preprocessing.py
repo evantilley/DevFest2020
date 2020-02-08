@@ -17,8 +17,8 @@ x_test /= 255
 # Instead we want to map each label to be assigned to an
 # array containing the correct element set to "1" that
 # corresponds to the correct dataset 
-y_train = keras.utils.to_categorical(y_train, num_classes)
-y_test = keras.utils.to_categorical(y_test, num_classes)
+y_train = keras.utils.to_categorical(y_train, Dataset.get_num_classes())
+y_test = keras.utils.to_categorical(y_test, Dataset.get_num_classes())
 
 # Creating our model with layers
 model = Sequential()
