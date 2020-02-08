@@ -5,6 +5,9 @@ class Dataset:
     def load_data():
         
         return ((x_train, y_train),(x_test, y_test))
+    #returns the number of categories we are sorting into
+    def get_num_classes():
+        pass
     #returns a string of the dataset name
     def get_name():
         pass
