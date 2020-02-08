@@ -1,0 +1,25 @@
+{
+  "name": "devfest2020",
+  "version": "1.0.0",
+  "description": "ML UI",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evantilley/DevFest2020.git"
+  },
+  "author": "Evan Tilley",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/evantilley/DevFest2020/issues"
+  },
+  "homepage": "https://github.com/evantilley/DevFest2020#readme",
+  "dependencies": {
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.6",
+    "pug": "^2.0.4"
+  }
+}
