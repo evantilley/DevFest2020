@@ -1,18 +1,21 @@
-from pathlib import Path
 import os
+import numpy as np
+from pathlib import Path
 from keras_preprocessing import image
+from zipfile import ZipFile
 
 class Folders:
 
     def __init__(self):
         #supplies the test and train data in the format
-        training_data_folders = []
-        training_data_types = []
+        with ZipFile('model.zip', 'r') as zipObj:
+            zipObj.extractall()
+
+        training_data_folders = {}
         entries = os.listdir('model/')
 
         for entry in entries:
-            training_data_folders.append(Path("model") / entry)
-            training_data_types.append(entry)
+            training_data_folders[(Path("model") / entry)] = entry
 
         images = []
         labels = []
@@ -23,13 +26,16 @@ class Folders:
                 img = image.load_img(img)
                 image_array = image.img_to_array(img)
                 images.append(image_array)
-                labels.append()
+                labels.append(training_data_folders[folder])
 
             for img in folder.glob("*.png"):
                 img = image.load_img(img)
                 image_array = image.img_to_array(img)
                 images.append(image_array)
-                labels.append()
+                labels.append(training_data_folders[folder])
+
+        x_train = np.arrays(images)
+        y_train = np.array(labels)
 
 
 
