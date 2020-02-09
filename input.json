@@ -1,0 +1,5 @@
+{
+  "dataset": "students-mat.csv",
+  "attributes": ["G1", "G2"],
+  "predict": "G3"
+}
