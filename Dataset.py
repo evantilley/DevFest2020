@@ -66,13 +66,13 @@ class Folder:
                 images.append(image_array)
                 labels.append(training_data_folders[folder])
 
-        x_train = np.arrays(images)
-        y_train = np.array(labels)
+        self.x_train = np.arrays(images)
+        self.y_train = np.array(labels)
 
 class Dataset:
 
-    #def __init__(self):
-
+    def __init__(self):
+        pass
     #supplies the test and train data in the format
     def build_set(self):
 
