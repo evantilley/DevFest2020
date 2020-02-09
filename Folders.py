@@ -28,7 +28,13 @@ class Folders:
                 images.append(image_array)
                 labels.append(training_data_folders[folder])
 
-            for img in folder.glob("*.png"):
+            for img in folder.glob("*.jpg"):
+                img = image.load_img(img)
+                image_array = image.img_to_array(img)
+                images.append(image_array)
+                labels.append(training_data_folders[folder])
+
+            for img in folder.glob("*.jpg"):
                 img = image.load_img(img)
                 image_array = image.img_to_array(img)
                 images.append(image_array)
@@ -36,6 +42,8 @@ class Folders:
 
         x_train = np.arrays(images)
         y_train = np.array(labels)
+
+        return x_train, y_train
 
 
 
