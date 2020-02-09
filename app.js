@@ -15,6 +15,8 @@ var infoSchema = new mongoose.Schema({
     predict: String
 })
 
+
+
 var Info = mongoose.model('Item', infoSchema, "Data")
 
 
@@ -24,6 +26,7 @@ db.once('open', function(){
 
 
 let app = express()
+app.set('view engine', 'pug')
 app.use(upload())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
@@ -35,16 +38,35 @@ app.get('/', function(req, res){
     res.sendFile(__dirname + '/index.html')
 })
 
-app.get('/test', function(req, res){
-    res.sendFile(__dirname + '/test.html')
+app.get('/loading', function(req, res){
+
+    res.sendFile(__dirname + '/loading.html')
+})
+
+
+var test = ""
+var y = ""
+app.use('/learned', function(req, res){
+    console.log("asdfsad")
+    var x = db.collection("reviews").findOne({}, function(err, result){
+        console.log(result.output)
+        y = result.output
+    });
+    console.log("asdfasdfda")
+    console.log(y)
+    res.render('learned', {data: y})
+})
+
+app.post("/learned", function(req, res){
+    console.log("askjdfnasdf")
+
+    console.log("ASKFJNSUDAFUSDHUH")
 })
 
 app.post("/", function(req, res){
 
 
     console.log(req.body.info)
-
-
 
 
     if (req.files){
@@ -60,7 +82,7 @@ app.post("/", function(req, res){
         var file_name = ""
         file.mv("./" + filename, function(err){
             //res.render("./index.html")
-            res.send("yeyee")
+            res.sendFile(__dirname + '/loading.html')
             const mongodb = require("mongodb").MongoClient;
             const csvtojson = require("csvtojson");
             
