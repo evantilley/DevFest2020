@@ -13,60 +13,71 @@ import json
 # TODO: have node js add csv and json to
 #  directory then execute script
 
-client = MongoClient('mongodb://localhost:27017/MachineLearning')
-db = client.admin
+def main():
 
-serverStatusResult = db.command("serverStatus")
-pprint(serverStatusResult)
+    client = MongoClient('mongodb://localhost:27017/MachineLearning')
+    db = client.admin
 
-with open('input.json') as f:
-    input = json.load(f)
+    serverStatusResult = db.command("serverStatus")
+    pprint(serverStatusResult)
 
-dataset = input['dataset']
-attributes = input['attributes']
-predict = input['predict']
-attributes.append(predict)
+    with open('DevFest2020/input.json') as f:
+        input = json.load(f)
 
-# dataset = "student-mat.csv"
-# attributes = ["G1", "G2", "absences", "failures", "studytime", "G3"]
-# predict = "G2"
+    dataset = input['dataset']
+    attributes = input['attributes']
+    predict = input['predict']
+    attributes.append(predict)
 
-data = pd.read_csv(dataset, sep=";")
-data = data[attributes]
-data = shuffle(data)
+    # dataset = "student-mat.csv"
+    # attributes = ["G1", "G2", "absences", "failures", "studytime", "G3"]
+    # predict = "G2"
 
-x = np.array(data.drop([predict], 1))
-y = np.array(data[predict])
-x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.1)
+    data = pd.read_csv(dataset, sep=";")
+    data = data[attributes]
+    data = shuffle(data)
 
-best = 0
-for _ in range(20):
+    x = np.array(data.drop([predict], 1))
+    y = np.array(data[predict])
     x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.1)
 
-    linear = linear_model.LinearRegression()
+    best = 0
+    for _ in range(20):
+        x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.1)
 
-    linear.fit(x_train, y_train)
-    acc = linear.score(x_test, y_test)
-    print("Accuracy: " + str(acc))
+        linear = linear_model.LinearRegression()
 
-    if acc > best:
-        best = acc
-        with open("studentgrades.pickle", "wb") as f:
-            pickle.dump(linear, f)
+        linear.fit(x_train, y_train)
+        acc = linear.score(x_test, y_test)
+        print("Accuracy: " + str(acc))
 
-# LOAD MODEL
-pickle_in = open("studentgrades.pickle", "rb")
-linear = pickle.load(pickle_in)
+        if acc > best:
+            best = acc
+            with open("studentgrades.pickle", "wb") as f:
+                pickle.dump(linear, f)
+
+    # LOAD MODEL
+    pickle_in = open("studentgrades.pickle", "rb")
+    linear = pickle.load(pickle_in)
 
 
-# print("-------------------------")
-# print('Coefficient: \n', linear.coef_)
-# print('Intercept: \n', linear.intercept_)
-# print("-------------------------")
+    # print("-------------------------")
+    # print('Coefficient: \n', linear.coef_)
+    # print('Intercept: \n', linear.intercept_)
+    # print("-------------------------")
 
-print(best)
-predicted= linear.predict(x_test)
-for x in range(len(predicted)):
-    print(predicted[x], x_test[x], y_test[x])
+    print(best)
+    predicted= linear.predict(x_test)
+    for x in range(len(predicted)):
+        print(predicted[x], x_test[x], y_test[x])
 
+    outputString = "Your model has been trained with {} accuracy.".format(best)
+    output = {
+        'output': outputString
+    }
+
+    result = db.reviews.insert_one(output)
+
+if __name__== "__main__":
+    main()
 # TODO: send results back through node js sus stuff so it can be displayed on website
