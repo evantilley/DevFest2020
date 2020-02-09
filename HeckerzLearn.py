@@ -3,8 +3,8 @@ import pandas as pd
 from sklearn import linear_model
 import sklearn
 from sklearn.utils import shuffle
-import matplotlib.pyplot as plt
-from matplotlib import style
+from pymongo import MongoClient
+from pprint import pprint
 import pickle
 import json
 
@@ -12,6 +12,12 @@ import json
 
 # TODO: have node js add csv and json to
 #  directory then execute script
+
+client = MongoClient('mongodb://localhost:27017/MachineLearning')
+db = client.admin
+
+serverStatusResult = db.command("serverStatus")
+pprint(serverStatusResult)
 
 with open('input.json') as f:
     input = json.load(f)
