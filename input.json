@@ -1,5 +1,5 @@
 {
-  "dataset": "students-mat.csv",
+  "dataset": "DevFest2020/student-por.csv",
   "attributes": ["G1", "G2"],
   "predict": "G3"
 }

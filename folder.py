@@ -5,7 +5,7 @@ from pathlib import Path
 from keras_preprocessing import image
 from zipfile import ZipFile
 
-class Folders:
+class Folder:
 
     def __init__(self):
         #supplies the test and train data in the format
