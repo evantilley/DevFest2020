@@ -1,8 +1,19 @@
-<html>
-    <h1>upload file</h1>
+<head>
+    <link rel="stylesheet" type="text/css" href="index.css">
+  </head>
 
-    <form method = "post" enctype="multipart/form-data" action = "/">
-        <input type = "file" name = "filename">
-        <input type = "submit" value = "upload">
-    </form>
+<html>
+    <div id="rectangle">
+        <h1 id="title">Learn.io</h1>
+    
+        <h1 id="header">Upload a file</h1>
+        <form method = "post" enctype="multipart/form-data" action = "/">
+            <label for="file-upload" class="custom-file-upload">
+                Custom Upload
+            </label>
+            <input id="file-upload" type="file"/>
+            <!--<input type = "file" name = "filename"> -->
+            <input type = "submit" value = "upload">
+        </form>
+    </div>
 </html>
