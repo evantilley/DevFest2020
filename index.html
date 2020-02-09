@@ -1,8 +1,80 @@
 <html>
+    <head>
+        <script src = "https://code.jquery.com/jquery-3.3.1.min.js"
+        crossorigin="anonymous"> </script>
+
+    <script type ="text/javascript">
+
+        var array = []
+        var attributes = []
+        var track = 0;
+
+
+        $(document).on("click", ".btn-add-row", function(){
+            var row = $(".row").eq(0).clone().show();
+            $(".element-wrapper").append(row);
+            var ye = $(".element-wrapper")
+        })
+
+        $(document).on("click", ".btn-remove-row", function(){
+            var index = $(".btn-remove-row").index(this);
+            $(".row").eq(index).remove();
+        })
+
+
+        function myFunction(){
+
+            var predict = document.getElementById("predict").value
+            var inputs = document.querySelectorAll("div.row:not([style='display: none;']) input[type=\"text\"]");
+            var len = inputs.length;
+            for (var i = 0; i < len; i++){
+                array.push({
+                    input: i,
+                    value: inputs[i].value
+                });
+            }
+            for (var i = 0; i < len; i++){
+                attributes.push(array[i].value)
+            }
+
+            var dictionary = {"dataset": "dataset", "attributes": attributes, "predict": predict}
+            var new1 = JSON.stringify(dictionary)
+            var test = document.getElementById("hello")
+            test.value = new1
+            console.log("Value is")
+            console.log(test.value)
+            console.log(dictionary)
+        }
+
+            
+    </script>
+
+    <body>
     <h1>upload file</h1>
 
-    <form method = "post" enctype="multipart/form-data" action = "/">
+    <input type = "text" id = "predict" placeholder = "Predict">
+
+    <span id = "yeye">test</span>
+
+    <form name = "myForm" method = "post" enctype="multipart/form-data" action = "/">
         <input type = "file" name = "filename">
-        <input type = "submit" value = "upload">
+        <input type="text" name="lastname" value="yoyoyo">
+        <input type = "hidden" id = "hello" name = "info" value = "">
+        <input onclick="myFunction()" type = "submit" value = "upload">
     </form>
+
+
+    <div class = "element-wrapper">
+        <div class = "row" style = "display: none;">
+            <input type = "text" placeholder = "Attribute" id = "ye">
+            <button class = "btn-remove-row">
+                Remove Row
+            </button>
+    </div>
+    </div>
+
+    <button class = "btn-add-row"> Add New Row </button>
+
+
+    </body>
 </html>
