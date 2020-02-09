@@ -49,7 +49,7 @@ class NeuralNetwork:
 
     def __export_data(self):
         # Save the array of extracted features to a file
-        joblib.dumps(self.features_x, "x_train.dat")
+        joblib.dump(self.features_x, "x_train.dat")
 
         # Save the matching array of expected values to a file
         joblib.dump(self.y_train, "y_train.dat")
@@ -99,10 +99,10 @@ class NeuralNetwork:
         self.model_structure = self.f.read_text()
 
         # Recreate the Keras model object from the json data
-        self.model = model_from_json(model_structure)
+        self.model = model_from_json(self.model_structure)
 
         # Re-load the model's trained weights
-        self.model.load_weights(dataset.get_name()+"_model_weights.h5")
+        self.model.load_weights(self.dataset.get_name()+"_model_weights.h5")
     
     def prepare_image(self,path_to_file):
         # Load an image file to test, resizing it to 224x224 pixels (as allowed by NASNet)
@@ -119,7 +119,7 @@ class NeuralNetwork:
 
     def test_image(self):
         # Use the pre-trained neural network to extract features from our test image (the same way we did to train the model)
-        feature_extraction_model = nasnet.NASNETMobile(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
+        feature_extraction_model = nasnet.NASNetMobile(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
         features = feature_extraction_model.predict(self.images)
 
         # Given the extracted features, make a final prediction using our own model
