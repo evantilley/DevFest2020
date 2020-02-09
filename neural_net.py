@@ -6,22 +6,38 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from pathlib import Path
 from keras.models import model_from_json
-from keras.applications import nasnet
+from keras.applications import vgg16
 
+class_labels = [
+        "Plane",
+        "Car",
+        "Bird",
+        "Cat",
+        "Deer",
+        "Dog",
+        "Frog",
+        "Horse",
+        "Boat",
+        "Truck"
+    ]
 class NeuralNetwork:
 
 
+    # These are the CIFAR10 class labels from the training data (in order from 0 to 9)
+    
 
     def __init__(self, dataset, test_data):
         self.dataset = dataset
         self.x_train=None
         self.y_train= None
         self.features_x= None
-        self.test_data= None 
+        self.test_data = None
         self.model= None 
         self.images= None 
         self.features= None 
         self.img = None
+        self.x_test = None
+        self.y_test = None
         self.__import_data()
         self.__build_neural_network()
         self.__export_data()
@@ -30,19 +46,21 @@ class NeuralNetwork:
         self.__compile_model()
         self.__train_model()
         self.__export_model()
+        self.__reload_model()
+        self.predict(self.test_data)
 
 
 
     def __import_data(self):
         # Load data from our dataset
-        (self.x_train, self.y_train) = self.dataset.build_data()
+        ((self.x_train, self.y_train),(self.x_test,self.y_test)) = self.dataset.build_data()
 
         # Normalize image data to 0-to-1 range
-        self.x_train = nasnet.preprocess_input(self.x_train)
+        self.x_train = vgg16.preprocess_input(self.x_train)
     
     def __build_neural_network(self):
         # Load a pre-trained neural network to use as a feature extractor
-        pretrained_nn = nasnet.NASNetMobile(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
+        pretrained_nn = vgg16.VGG16(weights='imagenet', include_top=False, input_shape=(32, 32, 3))
 
         # Extract features for each image (all in one pass)
         self.features_x = pretrained_nn.predict(self.x_train)
@@ -71,7 +89,7 @@ class NeuralNetwork:
     def __compile_model(self):
         # Compile the model
         self.model.compile(
-            loss="binary_crossentropy",
+            loss="categorical_crossentropy",
             optimizer="adam",
             metrics=['accuracy']
         )
@@ -81,6 +99,8 @@ class NeuralNetwork:
         self.model.fit(
             self.x_train,
             self.y_train,
+            batch_size=100,
+            validation_data= (self.x_test, self.y_test),
             epochs=self.dataset.get_epoch_count(),
             shuffle=True
         )
@@ -88,14 +108,14 @@ class NeuralNetwork:
     def __export_model(self):
         # Save neural network structure to a JSON file 
         self.model_structure = self.model.to_json()
-        self.f = Path(self.dataset.get_name() + "model_structure.json")
+        self.f = Path(self.dataset.get_name() + "_model_structure.json")
         self.f.write_text(self.model_structure)
 
         # Save neural network's trained weights
-        self.model.save_weights(self.dataset.get_name() + "model_weights.h5")
-    def reload_model(self):
+        self.model.save_weights(self.dataset.get_name() + "_model_weights.h5")
+    def __reload_model(self):
         # Load the json file that contains the model's structure
-        self.f = Path(self.dataset.get_name() + "model_structure.json")
+        self.f = Path(self.dataset.get_name() + "_model_structure.json")
         self.model_structure = self.f.read_text()
 
         # Recreate the Keras model object from the json data
@@ -104,7 +124,7 @@ class NeuralNetwork:
         # Re-load the model's trained weights
         self.model.load_weights(self.dataset.get_name()+"_model_weights.h5")
     
-    def prepare_image(self,path_to_file):
+    def __prepare_image(self,path_to_file):
         # Load an image file to test, resizing it to 224x224 pixels (as allowed by NASNet)
         img = image.load_img(path_to_file, target_size=(224, 224))
 
@@ -115,24 +135,39 @@ class NeuralNetwork:
         self.images = np.expand_dims(image_array, axis=0)
 
         # Normalize the data
-        self.images = nasnet.preprocess_input(self.images)
+        self.images = vgg16.preprocess_input(self.images)
 
-    def test_image(self):
+    def __test_image(self):
         # Use the pre-trained neural network to extract features from our test image (the same way we did to train the model)
-        feature_extraction_model = nasnet.NASNetMobile(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
+        feature_extraction_model = vgg16.VGG16(weights='imagenet' , include_top=False, input_shape=(32, 32, 3))
         features = feature_extraction_model.predict(self.images)
 
         # Given the extracted features, make a final prediction using our own model
         results = self.model.predict(features)
 
         # Since we are only testing one image with possible class, we only need to check the first result's first element
-        image_prediction = int(results[0][0]*100)
+        image_prediction = results[0]
         self.export_prediction(image_prediction)
 
     # TODO: now write this to JSON for evan
     def export_prediction(self, image_prediction):
-        pass
+        most_likely_class_index = int(np.argmax(image_prediction))
+        class_likelihood = image_prediction[most_likely_class_index]
+
+        class_label = class_labels[most_likely_class_index]
+        print("This is a {}, with {} certainty.".format(class_label,class_likelihood))
 
     def predict(self, path_to_file):
-        self.prepare_image(path_to_file)
-        self.test_image()
+        self.__prepare_image(path_to_file)
+        self.__test_image()
+
+from dataset import Dataset
+
+def main():
+    ds = Dataset()
+    nn = NeuralNetwork(ds, "dog.jpg")
+    nn.predict("dog.jpg")
+
+if __name__ == "__main__":
+    main()
+
