@@ -6,12 +6,13 @@ from keras_preprocessing import image
 from zipfile import ZipFile
 from pymongo import MongoClient
 from pprint import pprint
+from keras.datasets import cifar10
 
-client = MongoClient('mongodb://localhost:27017/MachineLearning')
-db = client.admin
+#client = MongoClient('mongodb://localhost:27017/MachineLearning')
+#db = client.admin
 
-serverStatusResult = db.command("serverStatus")
-pprint(serverStatusResult)
+#serverStatusResult = db.command("serverStatus")
+#pprint(serverStatusResult)
 
 class Folder:
 
@@ -72,20 +73,21 @@ class Folder:
 class Dataset:
 
     def __init__(self):
-        pass
+        ((self.x_train, self.y_train), (self.x_test, self.y_test)) = cifar10.load_data()
+        
     #supplies the test and train data in the format
-    def build_set(self):
+    def build_data(self):
 
-        folder = Folder()
+        #folder = Folder()
 
 
-        #return ((x_train, y_train),(x_test, y_test))
+        return ((self.x_train, self.y_train),(self.x_test, self.y_test))
     #returns the number of categories we are sorting into
     def get_num_classes(self):
-        pass
+        return 10
     #returns a string of the dataset name
     def get_name(self):
-        pass
+        return "cifar10"
     #returns an integer of the proper epoch count for the dataset
     def get_epoch_count(self):
-        pass
+        return 40
