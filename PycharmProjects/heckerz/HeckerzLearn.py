@@ -8,6 +8,7 @@ from matplotlib import style
 import pickle
 import json
 
+
 # style.use("ggplot")
 
 # TODO: have node js add csv and json to
